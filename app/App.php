@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare( strict_types = 1 );
 
@@ -38,12 +38,12 @@ class App {
         $file = fopen( $file_name, 'r' );
         // The header of the CSV file will determine the order of the columns
     	$csv_header = explode( ";", strtolower( implode( fgetcsv( $file ) ) ) );
-        // We read the CSV file line by line, adding its content to our sale array        
+        // We read the CSV file line by line, adding its content to our sale array
         while ( ( $csv_line = fgetcsv( $file, null, ";" ) ) !== false ) {
     		$sale_line = [];
     		foreach( $csv_line as $field_position => $field_name ) {
     			$sale_line[$csv_header[$field_position]] = $field_name;
-            }            
+            }
             // Clean the "cost" column
             $sale_line['cost'] = str_replace( ['€', '.'], '', $sale_line['cost'] );
             $sale_line['cost'] = (float) str_replace( ',', '.', $sale_line['cost'] );
@@ -59,7 +59,8 @@ class App {
             $sale = new Sale( $sale_line['product'], $sale_line['category'], $sale_line['cost'], $sale_line['quantity'], $sale_line['sale_formula'] );
             // Add the profit to it's product category
             $this->add_sale_profit_to_category( $sale );
-        }        
+        }
+        fclose( $file );
         return $this->profit_by_category;
     }
 
@@ -70,7 +71,7 @@ class App {
         } else {
             $this->profit_by_category[$sale->get_category()] = $sale->calculate_profit();
         }
-    }    
+    }
 
 }
 
